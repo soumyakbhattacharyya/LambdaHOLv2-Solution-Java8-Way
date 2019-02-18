@@ -1,4 +1,4 @@
-package exercises;
+package solutions;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -32,6 +32,7 @@ public class C_DefaultMethods {
     List<StringBuilder> sbList = Arrays.asList(new StringBuilder("alfa"), new StringBuilder("bravo"), new StringBuilder("charlie"));
 
     // TODO write code to modify sbList
+    sbList.forEach(x -> x.append("new"));
 
     assertEquals(Arrays.asList("alfanew", "bravonew", "charlienew"), sbList.stream().map(StringBuilder::toString).collect(Collectors.toList()));
   }
@@ -48,6 +49,7 @@ public class C_DefaultMethods {
     List<String> list = new ArrayList<>(Arrays.asList("alfa", "bravo", "charlie", "delta", "echo", "foxtrot"));
 
     // TODO write code to modify list
+    list.removeIf(x -> (x.length() % 2 != 0));
 
     assertEquals(Arrays.asList("alfa", "echo"), list);
   }
@@ -64,6 +66,7 @@ public class C_DefaultMethods {
     List<String> list = Arrays.asList("alfa", "bravo", "charlie", "delta", "echo", "foxtrot");
 
     // TODO code to modify list
+    list.replaceAll(x -> x.toUpperCase());
 
     assertEquals(Arrays.asList("ALFA", "BRAVO", "CHARLIE", "DELTA", "ECHO", "FOXTROT"), list);
   }
@@ -84,6 +87,9 @@ public class C_DefaultMethods {
     map.put(3, new StringBuilder("charlie"));
 
     // TODO write code to modify map
+    map.forEach((x, y) -> {
+      y.append(String.valueOf(x.intValue()));
+    });
 
     assertEquals(3, map.size());
     assertTrue(map.values().stream().allMatch(x -> x instanceof StringBuilder));
@@ -107,6 +113,7 @@ public class C_DefaultMethods {
     map.put(3, "charlie");
 
     // TODO write code to modify map
+    map.replaceAll((x, y) -> y + x);
 
     assertEquals(new HashMap() {
       {
@@ -149,6 +156,7 @@ public class C_DefaultMethods {
     // });
     // });
 
+    list.forEach(s -> result.computeIfAbsent(s.length(), key -> new ArrayList<>()).add(s));
 
     assertEquals(new HashMap() {
       {
@@ -174,7 +182,15 @@ public class C_DefaultMethods {
     Map<Character, String> result = new TreeMap<Character, String>();
 
     // TODO write code to populate result
-    
+    BiFunction<String, String, String> f = new BiFunction<String, String, String>() {
+
+      @Override
+      public String apply(String t, String u) {
+        return t + u;
+      }
+    };
+    BiFunction<String, String, String> f1 = (t, u) -> t + ":" + u;
+    list.forEach(s -> result.merge(s.charAt(0), s, f1));
 
     assertEquals(new HashMap() {
       {
@@ -211,6 +227,7 @@ public class C_DefaultMethods {
     expected.put("f", "");
     expected.put("g", "");
 
+    keys.forEach(key -> map.putIfAbsent(key, ""));
 
     // Map<String, String> map = new HashMap<>(Map.of("a", "alfa", "b", "bravo", "c", "charlie", "d", "delta"));
 
@@ -248,6 +265,7 @@ public class C_DefaultMethods {
     expected.put("d", "delta");
 
     // TODO write code to fix the map
+    map.entrySet().removeIf(x -> "".equals(x.getValue()));
 
     assertEquals(expected, map);
   }
@@ -279,7 +297,14 @@ public class C_DefaultMethods {
     expected.put("g", "g");
 
     // TODO write code to fix the map
-    
+    keys.forEach(x -> map.replaceAll((t, u) -> {
+      if ("".equals(u)) {
+        return t;
+      } else {
+        return u;
+      }
+    }));
+
     assertEquals(expected, map);
   }
 
@@ -299,7 +324,19 @@ public class C_DefaultMethods {
     map.put("f", "");
     map.put("g", "");
 
-    // TODO write code
+    map.replaceAll(new BiFunction<String, String, String>() {
+
+      @Override
+      public String apply(String key, String value) {
+
+        if ("".equals(value)) {
+          return key;
+        } else {
+          return value.toUpperCase();
+        }
+
+      }
+    });
 
     Map<String, String> expected = new HashMap<>();
     expected.put("a", "ALFA");
@@ -329,7 +366,20 @@ public class C_DefaultMethods {
     map.put("f", "");
     map.put("g", "");
 
-    // TODO write code
+    // TODO write code transform the map   
+    keys.forEach(key -> {map.compute(key, new BiFunction<String, String, String>() {
+
+      @Override
+      public String apply(String key, String value) {
+
+        if ("".equals(value)) {
+          return null;
+        } else {
+          return value.toUpperCase();
+        }
+
+      }
+    });});
     
     Map<String, String> expected = new HashMap<>();
     expected.put("a", "ALFA");

@@ -1,4 +1,4 @@
-package exercises;
+package solutions;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -40,7 +40,7 @@ public class B_Comparators {
    */
   @Test
   public void comparator01() {
-    Comparator<String> compareByLength = null;
+    Comparator<String> compareByLength = (s1, s2) -> s1.length() - s2.length();
 
     assertTrue(compareByLength.compare("FOUR", "TWO") > 0);
     assertTrue(compareByLength.compare("ONE", "SEVEN") < 0);
@@ -58,10 +58,10 @@ public class B_Comparators {
    */
   @Test
   public void comparator02() {
-    Comparator<String> compareByLength = null;
-    Comparator<String> naturalComparator = null;
+    Comparator<String> compareByLength = (s1, s2) -> s1.length() - s2.length();
+    Comparator<String> naturalComparator = Comparator.naturalOrder();
 
-    Comparator<String> compareByLengthThenAlphabetical = null;
+    Comparator<String> compareByLengthThenAlphabetical = compareByLength.thenComparing(naturalComparator);
 
     assertTrue(compareByLengthThenAlphabetical.compare("FOUR", "TWO") > 0);
     assertTrue(compareByLengthThenAlphabetical.compare("ONE", "SEVEN") < 0);
@@ -82,7 +82,7 @@ public class B_Comparators {
    */
   @Test
   public void comparator03() {
-    Comparator<Person> comparebyLastName = null;
+    Comparator<Person> comparebyLastName = Comparator.comparing(Person::getLastName, String.CASE_INSENSITIVE_ORDER);
 
     assertTrue(comparebyLastName.compare(michael, rod) < 0);
     assertTrue(comparebyLastName.compare(paul, paul) == 0);
@@ -100,9 +100,9 @@ public class B_Comparators {
    */
   @Test
   public void comparator04() {
-    Comparator<Person> comparebyFirstName = null;
-    Comparator<Person> comparebyLastName = null;
-    Comparator<Person> comparebyLastNameThenFirstName = null;
+    Comparator<Person> comparebyFirstName = Comparator.comparing(Person::getFirstName, String.CASE_INSENSITIVE_ORDER);
+    Comparator<Person> comparebyLastName = Comparator.comparing(Person::getLastName, String.CASE_INSENSITIVE_ORDER);
+    Comparator<Person> comparebyLastNameThenFirstName = comparebyLastName.thenComparing(comparebyFirstName);
 
     assertTrue(comparebyLastNameThenFirstName.compare(michael, rod) < 0);
     assertTrue(comparebyLastNameThenFirstName.compare(paul, paul) == 0);
@@ -119,10 +119,10 @@ public class B_Comparators {
    */
   @Test
   public void comparator05() {
-    Comparator<Person> comparebyFirstName = null;
-    Comparator<Person> comparebyLastName = null;
+    Comparator<Person> comparebyFirstName = Comparator.comparing(Person::getFirstName, String.CASE_INSENSITIVE_ORDER);
+    Comparator<Person> comparebyLastName = Comparator.comparing(Person::getLastName, String.CASE_INSENSITIVE_ORDER);
 
-    Comparator<Person> comparebyLastNameThenFirstNameReversed = null;
+    Comparator<Person> comparebyLastNameThenFirstNameReversed = comparebyLastName.reversed().thenComparing(comparebyFirstName.reversed());
 
     assertFalse(comparebyLastNameThenFirstNameReversed.compare(michael, rod) < 0);
     assertTrue(comparebyLastNameThenFirstNameReversed.compare(paul, paul) == 0);
@@ -158,7 +158,7 @@ public class B_Comparators {
    */
   @Test
   public void comparator07() {
-    Comparator<Person> comparebyAge = null;
+    Comparator<Person> comparebyAge = Comparator.comparingInt(Person::getAge);
 
     assertTrue(comparebyAge.compare(michael, rod) < 0);
     assertTrue(comparebyAge.compare(paul, paul) == 0);
@@ -176,7 +176,11 @@ public class B_Comparators {
    */
   @Test
   public void comparator08() {
-    LongBinaryOperator intCompare = null;
+    LongBinaryOperator intCompare = (x, y) -> {
+      
+      return ((x - y) == 0) ? 0 : (x- y);
+      
+    };
     assertTrue(intCompare.applyAsLong(0, 1) < 0);
     assertTrue(intCompare.applyAsLong(1, 1) == 0);
     assertTrue(intCompare.applyAsLong(2, 1) > 0);
