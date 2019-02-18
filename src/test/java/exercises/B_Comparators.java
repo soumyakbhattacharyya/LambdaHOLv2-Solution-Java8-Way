@@ -1,14 +1,14 @@
 package exercises;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.util.Comparator;
 import java.util.function.IntBinaryOperator;
+import java.util.function.LongBinaryOperator;
 
 import org.junit.Ignore;
 import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 import model.Person;
 
@@ -114,8 +114,7 @@ public class B_Comparators {
   // </editor-fold>
 
   /**
-   * Write a Comparator that compares the people in the order reversed from the one you wrote in the comparator04() exercise. 
-   * That is, the person with the greater last name should
+   * Write a Comparator that compares the people in the order reversed from the one you wrote in the comparator04() exercise. That is, the person with the greater last name should
    * be ordered first. If two persons have the same last name, the one with the greater first name should be ordered first.
    */
   @Test
@@ -158,9 +157,8 @@ public class B_Comparators {
    * Write a Comparator that compares two people by age. Try to write the comparator so as to avoid boxing of primitives.
    */
   @Test
-  @Ignore
   public void comparator07() {
-    Comparator<Person> comparebyAge = null; // TODO
+    Comparator<Person> comparebyAge = Comparator.comparingInt(Person::getAge);
 
     assertTrue(comparebyAge.compare(michael, rod) < 0);
     assertTrue(comparebyAge.compare(paul, paul) == 0);
@@ -177,15 +175,17 @@ public class B_Comparators {
    * The Comparator interface takes two objects, but in this case we are comparing int primitives, so the functional interface we use is IntBinaryOperator.
    */
   @Test
-  @Ignore
   public void comparator08() {
-    IntBinaryOperator intCompare = null; // TODO
-
-    assertTrue(intCompare.applyAsInt(0, 1) < 0);
-    assertTrue(intCompare.applyAsInt(1, 1) == 0);
-    assertTrue(intCompare.applyAsInt(2, 1) > 0);
-    assertTrue(intCompare.applyAsInt(Integer.MIN_VALUE, Integer.MAX_VALUE) < 0);
-    assertTrue(intCompare.applyAsInt(Integer.MAX_VALUE, Integer.MIN_VALUE) > 0);
+    LongBinaryOperator intCompare = (x, y) -> {
+      
+      return ((x - y) == 0) ? 0 : (x- y);
+      
+    };
+    assertTrue(intCompare.applyAsLong(0, 1) < 0);
+    assertTrue(intCompare.applyAsLong(1, 1) == 0);
+    assertTrue(intCompare.applyAsLong(2, 1) > 0);
+    assertTrue(intCompare.applyAsLong(Integer.MIN_VALUE, Integer.MAX_VALUE) < 0);
+    assertTrue(intCompare.applyAsLong(Integer.MAX_VALUE, Integer.MIN_VALUE) > 0);
   }
   // Hint:
   // <editor-fold defaultstate="collapsed">
