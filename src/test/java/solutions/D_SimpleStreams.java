@@ -1,4 +1,4 @@
-package exercises;
+package solutions;
 
 import static org.junit.Assert.assertEquals;
 
@@ -33,8 +33,13 @@ public class D_SimpleStreams {
   public void d1_upcaseOddLengthWords() {
     List<String> input = Arrays.asList("alfa", "bravo", "charlie", "delta", "echo", "foxtrot");
 
-   
-    List<String> result = null;
+    Predicate<String> filterFun = new Predicate<String>() {
+      @Override
+      public boolean test(String t) {
+        return (t.length() % 2) != 0 ? true : false;
+      }
+    };
+    List<String> result = input.stream().filter(filterFun).map(x -> x.toUpperCase()).collect(Collectors.toList());
     assertEquals(Arrays.asList("BRAVO", "CHARLIE", "DELTA", "FOXTROT"), result);
   }
 
@@ -45,7 +50,7 @@ public class D_SimpleStreams {
   public void d2_joinStreamRange() {
     List<String> input = Arrays.asList("alfa", "bravo", "charlie", "delta", "echo", "foxtrot");
 
-    String result = null;
+    String result = input.stream().skip(2).limit(3).map(x -> String.valueOf(x.charAt(1))).collect(Collectors.joining(","));
 
     assertEquals("h,e,c", result);
   }
@@ -58,7 +63,7 @@ public class D_SimpleStreams {
   @Test
   public void d3_countLinesInFile() throws IOException {
 
-    long count = 0; // TODO
+    long count = reader.lines().count(); // TODO
 
     assertEquals(14, count);
   }
@@ -70,8 +75,13 @@ public class D_SimpleStreams {
    */
   @Test
   public void d4_findLengthOfLongestLine() throws IOException {
-    
-    int longestLength = 0;
+    Comparator<String> longestStringFinder = new Comparator<String>() {
+      @Override
+      public int compare(String o1, String o2) {
+        return o1.length() < o2.length() ? -1 : 1;
+      }
+    };
+    int longestLength = reader.lines().collect(Collectors.maxBy(longestStringFinder)).get().length();
     assertEquals(53, longestLength);
   }
 
@@ -82,8 +92,13 @@ public class D_SimpleStreams {
    */
   @Test
   public void d5_findLongestLine() throws IOException {
-    
-    String longest = "";
+    Comparator<String> longestStringFinder = new Comparator<String>() {
+      @Override
+      public int compare(String o1, String o2) {
+        return o1.length() < o2.length() ? -1 : 1;
+      }
+    };
+    String longest = reader.lines().collect(Collectors.maxBy(longestStringFinder)).get();
 
     assertEquals("Feed'st thy light's flame with self-substantial fuel,", longest);
   }
@@ -93,10 +108,16 @@ public class D_SimpleStreams {
    */
   @Test
   public void d6_selectLongestWords() {
-   
+    Comparator<String> longestStringFinder = new Comparator<String>() {
+      @Override
+      public int compare(String o1, String o2) {
+        return o1.length() < o2.length() ? -1 : 1;
+      }
+    };
     List<String> input = Arrays.asList("alfa", "bravo", "charlie", "delta", "echo", "foxtrot", "golf", "hotel");
 
-    List<String> result = null;
+    int length = input.stream().collect(Collectors.maxBy(longestStringFinder)).get().length();
+    List<String> result = input.stream().filter(x -> (x.length() == length)).collect(Collectors.toList());
     assertEquals(Arrays.asList("charlie", "foxtrot"), result);
   }
 
@@ -106,7 +127,7 @@ public class D_SimpleStreams {
   @Test
   public void d7_selectByLengthAndPosition() {
     List<String> input = Arrays.asList("alfa", "bravo", "charlie", "delta", "echo", "foxtrot", "golf", "hotel");
-    List<String> result = null; 
+    List<String> result = input.stream().filter(x -> x.length() > input.indexOf(x)).collect(Collectors.toList());; 
 
     assertEquals(Arrays.asList("alfa", "bravo", "charlie", "delta", "foxtrot"), result);
   }
